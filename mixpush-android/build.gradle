@@ -86,7 +86,7 @@ afterEvaluate {
                 from components.release
                 groupId = GROUP
                 artifactId = POM_ARTIFACT_ID
-                version = "6.0.1"
+                version = "6.0.2"
             }
         }
     }
