@@ -27,29 +27,29 @@ android {
     }
 }
 
-android.libraryVariants.all { variant ->
-    def javadoc = task("generate${variant.name}Javadoc", type: Javadoc) {
-        description "Generates Javadoc for $variant.name."
-        def compileTask = variant.hasProperty('javaCompileProvider')? variant.javaCompileProvider.get() : variant.javaCompile
-        source = compileTask.source
-        ext.androidJar = "${android.sdkDirectory}/platforms/${android.compileSdkVersion}/android.jar"
-        doFirst { classpath = files(compileTask.classpath.files) + files(ext.androidJar) }
-        options.links("http://docs.oracle.com/javase/8/docs/api/");
-        options.links("http://d.android.com/reference/");
-        exclude '**/BuildConfig.java'
-        exclude '**/R.java'
-    }
-    def name = variant.buildType.name
-    def task = project.tasks.create "jar${name.capitalize()}", Jar
-    def compileTask = variant.hasProperty('javaCompileProvider')? variant.javaCompileProvider.get() : variant.javaCompile
-    task.dependsOn compileTask
-    task.dependsOn javadoc
-    task.from compileTask.destinationDir
-    task.exclude '**/BuildConfig.class'
-    task.exclude '**/R.class'
-    task.exclude '**/R$*.class'
-    artifacts.add('archives', task)
-}
+//android.libraryVariants.all { variant ->
+//    def javadoc = task("generate${variant.name}Javadoc", type: Javadoc) {
+//        description "Generates Javadoc for $variant.name."
+//        def compileTask = variant.hasProperty('javaCompileProvider')? variant.javaCompileProvider.get() : variant.javaCompile
+//        source = compileTask.source
+//        ext.androidJar = "${android.sdkDirectory}/platforms/${android.compileSdkVersion}/android.jar"
+//        doFirst { classpath = files(compileTask.classpath.files) + files(ext.androidJar) }
+//        options.links("http://docs.oracle.com/javase/8/docs/api/");
+//        options.links("http://d.android.com/reference/");
+//        exclude '**/BuildConfig.java'
+//        exclude '**/R.java'
+//    }
+//    def name = variant.buildType.name
+//    def task = project.tasks.create "jar${name.capitalize()}", Jar
+//    def compileTask = variant.hasProperty('javaCompileProvider')? variant.javaCompileProvider.get() : variant.javaCompile
+//    task.dependsOn compileTask
+//    task.dependsOn javadoc
+//    task.from compileTask.destinationDir
+//    task.exclude '**/BuildConfig.class'
+//    task.exclude '**/R.class'
+//    task.exclude '**/R$*.class'
+//    artifacts.add('archives', task)
+//}
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
