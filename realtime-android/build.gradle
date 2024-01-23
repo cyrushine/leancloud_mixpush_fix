@@ -1,0 +1,84 @@
+apply plugin: 'com.android.library'
+
+android {
+    useLibrary 'org.apache.http.legacy'
+
+    compileSdkVersion 26
+    buildToolsVersion "28.0.3"
+
+    defaultConfig {
+        minSdkVersion 14
+        targetSdkVersion 26
+        versionCode 1
+        versionName "5.0.0-SNAPSHOT"
+
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    lintOptions {
+        abortOnError false
+    }
+
+    packagingOptions {
+        exclude 'META-INF/LICENSE.txt'
+        exclude 'META-INF/NOTICE.txt'
+    }
+}
+
+android.libraryVariants.all { variant ->
+    def javadoc = task("generate${variant.name}Javadoc", type: Javadoc) {
+        description "Generates Javadoc for $variant.name."
+        def compileTask = variant.hasProperty('javaCompileProvider')? variant.javaCompileProvider.get() : variant.javaCompile
+        source = compileTask.source
+        ext.androidJar = "${android.sdkDirectory}/platforms/${android.compileSdkVersion}/android.jar"
+        doFirst { classpath = files(compileTask.classpath.files) + files(ext.androidJar) }
+        options.links("http://docs.oracle.com/javase/8/docs/api/");
+        options.links("http://d.android.com/reference/");
+        exclude '**/BuildConfig.java'
+        exclude '**/R.java'
+    }
+    def name = variant.buildType.name
+    def task = project.tasks.create "jar${name.capitalize()}", Jar
+    def compileTask = variant.hasProperty('javaCompileProvider')? variant.javaCompileProvider.get() : variant.javaCompile
+    task.dependsOn compileTask
+    task.dependsOn javadoc
+    task.from compileTask.destinationDir
+    task.exclude '**/BuildConfig.class'
+    task.exclude '**/R.class'
+    task.exclude '**/R$*.class'
+    artifacts.add('archives', task);
+}
+
+dependencies {
+//    implementation fileTree(dir: 'libs', include: ['*.jar'])
+
+    implementation project(':storage-android')
+
+    implementation("cn.leancloud:realtime-core:${rootProject.ext.sdkVersion}"){
+        exclude group: 'com.alibaba', module: 'fastjson'
+        exclude group: 'org.ligboy.retrofit2', module: 'converter-fastjson'
+    }
+    implementation "com.alibaba:fastjson:${rootProject.ext.fastjsonVersion}"
+    implementation "org.ligboy.retrofit2:converter-fastjson-android:${rootProject.ext.converterVersion}"
+
+    implementation "com.android.support:support-v4:${rootProject.ext.supportLibVersion}"
+
+    testImplementation 'junit:junit:4.12'
+    androidTestImplementation 'com.android.support.test:runner:1.0.2'
+    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
+}
+
+//apply from: '../maven_push.gradle'

@@ -1,0 +1,78 @@
+apply plugin: 'com.android.application'
+
+android {
+    compileSdkVersion 26
+    buildToolsVersion "28.0.3"
+
+    defaultConfig {
+        applicationId "cn.leancloud.realtime_sample_app"
+        minSdkVersion 22
+        targetSdkVersion 26
+        versionCode 1
+        versionName "1.0"
+
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    sourceSets {
+        main {
+            java {
+                exclude 'src/main/assets'
+            }
+        }
+    }
+    packagingOptions {
+        exclude 'META-INF/LICENSE.txt'
+        exclude 'META-INF/NOTICE.txt'
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    lintOptions {
+        abortOnError false
+    }
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+
+    implementation project(":realtime-android")
+    implementation project(':storage-android')
+
+//    implementation('cn.leancloud:realtime-core:5.0.18-SNAPSHOT') {
+//        exclude group: 'com.alibaba', module: 'fastjson'
+//        exclude group: 'org.ligboy.retrofit2', module: 'converter-fastjson'
+//    }
+//    implementation('cn.leancloud:storage-core:5.0.18-SNAPSHOT') {
+//        exclude group: 'com.alibaba', module: 'fastjson'
+//        exclude group: 'org.ligboy.retrofit2', module: 'converter-fastjson'
+//    }
+
+    implementation("cn.leancloud:realtime-core:${rootProject.ext.sdkVersion}"){
+        exclude group: 'com.alibaba', module: 'fastjson'
+        exclude group: 'org.ligboy.retrofit2', module: 'converter-fastjson'
+    }
+
+    implementation "io.reactivex.rxjava2:rxandroid:${rootProject.ext.rxandroidVersion}"
+    implementation "com.alibaba:fastjson:${rootProject.ext.fastjsonVersion}"
+    implementation "org.ligboy.retrofit2:converter-fastjson-android:${rootProject.ext.converterVersion}"
+
+    implementation "com.android.support:appcompat-v7:${rootProject.ext.supportLibVersion}"
+    implementation "com.android.support:design:${rootProject.ext.supportLibVersion}"
+    implementation 'com.android.support.constraint:constraint-layout:1.0.2'
+
+    testImplementation 'junit:junit:4.12'
+    androidTestImplementation 'com.android.support.test:runner:1.0.2'
+    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
+}
